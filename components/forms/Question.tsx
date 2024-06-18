@@ -14,16 +14,26 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { questionSchema } from "@/lib/validations";
 import { Badge } from '../ui/badge';
 import Image from 'next/image';
 import close from '@/public/assets/icons/close.svg'
+import { createQuestion } from '@/lib/actions/question.action';
+import { Content } from 'next/font/google';
 
-
+  const type:any='create'
 export function ProfileForm() {
+
    const editorRef = useRef(null);
- 
+
+
+
+  const [isSubmitting,setIsSubmitting]=useState(false)
+
+
+
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof questionSchema>>({
     resolver: zodResolver(questionSchema),
@@ -35,12 +45,41 @@ export function ProfileForm() {
     },
   });
 
+
+
+
+
+
+
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof questionSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  async function onSubmit(values: z.infer<typeof questionSchema>) {
+   setIsSubmitting(true) //loading
+   try {
+    // make a asyync call to db to create a ques
+    await createQuestion({})
+    
+    // conatin all form data to post
+    // navigate to form
+   } catch (error) {
+    
+   }finally{
+    setIsSubmitting(false)
+   }
+
     console.log(values);
   }
+
+
+
+
+
+
+
+
+
+
+
+
 
 // enter tag
   const handleInputKeyDown=(e: React.KeyboardEvent<HTMLInputElement>,field:any)=>{
@@ -68,7 +107,7 @@ export function ProfileForm() {
       }
     }
   }
-// del tag
+// delete tag
   const handleTagRemove=(tag:string, field:any)=>{
     const newTags= field.value.filter((t:string)=> t !==tag);
     form.setValue('tags', newTags);
@@ -82,7 +121,7 @@ export function ProfileForm() {
          
           render={({ field }) => (
             <FormItem className="flex flex-col ">
-              <FormLabel className="font-semibold">Username</FormLabel>
+              <FormLabel className="font-semibold">Question Title</FormLabel>
               <FormControl className="mt-3.5">
                 <Input className="text-white" placeholder="shadcn" {...field} />
               </FormControl>
@@ -110,6 +149,8 @@ export function ProfileForm() {
           // @ts-ignore
           editorRef.current = editor;
         } }
+        onBlur={field.onBlur}
+        onEditorChange={(content) => field.onChange(content)}
         initialValue="<p>This is the initial content of the editor.</p>"
         init={{
           height: 350,
@@ -166,7 +207,18 @@ export function ProfileForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button className='bg-orange-500' type="submit" disabled={isSubmitting}>{
+          isSubmitting ? (
+            <>
+            {type === 'edit' ? 'Editing..':'Posting..'}
+            </>
+          ):(
+            <>
+             {type === 'edit' ? 'Edit Question':'Ask a question'}
+            </>
+           
+          )
+          }</Button>
       </form>
     </Form>
   );

@@ -8,7 +8,7 @@ const page = () => {
       <div className='mt-9'>
         <Question />
       </div>
-      lorem200
+
     </div>
   )
 }
