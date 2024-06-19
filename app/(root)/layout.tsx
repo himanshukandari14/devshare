@@ -10,7 +10,7 @@ const Layout = ({children}:{ children: React.ReactNode}) => {
         <Navbar />
         <div className='flex'>
             <LeftsideBar />
-           <div className='main md:ml-[15%] md:mr-[15%] mt-[68px] h-screen w-full px-[10%]'>
+           <div className='main md:ml-[15%] md:mr-[15%] mt-[68px] min-h-screen w-full px-[10%]'>
         {children}
 </div>
            

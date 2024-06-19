@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { useRouter,usePathname } from 'next/navigation';
 import {
   Form,
   FormControl,
@@ -21,14 +22,20 @@ import Image from 'next/image';
 import close from '@/public/assets/icons/close.svg'
 import { createQuestion } from '@/lib/actions/question.action';
 import { Content } from 'next/font/google';
+import { redirect } from 'next/navigation';
 
   const type:any='create'
-export function ProfileForm() {
+
+  export interface Props{
+    mongoUserId:string;
+  }
+const Question = ({mongoUserId}:Props) => {
 
    const editorRef = useRef(null);
 
 
-
+  const router= useRouter();
+  const pathname = usePathname();
   const [isSubmitting,setIsSubmitting]=useState(false)
 
 
@@ -40,7 +47,8 @@ export function ProfileForm() {
     defaultValues: {
       title: "",
       explaination:"",
-      tags:[]
+      tags:[],
+      
 
     },
   });
@@ -56,7 +64,17 @@ export function ProfileForm() {
    setIsSubmitting(true) //loading
    try {
     // make a asyync call to db to create a ques
-    await createQuestion({})
+    await createQuestion({
+      title:values.title,
+      content:values.explaination,
+      tags:values.tags,
+      author:JSON.parse(mongoUserId),
+      path: pathname //usepathname hook
+      
+    });
+
+    // nav to home
+    router.push('/')
     
     // conatin all form data to post
     // navigate to form
@@ -151,7 +169,7 @@ export function ProfileForm() {
         } }
         onBlur={field.onBlur}
         onEditorChange={(content) => field.onChange(content)}
-        initialValue="<p>This is the initial content of the editor.</p>"
+        initialValue="This is the initial content of the editor."
         init={{
           height: 350,
           menubar: false,
@@ -224,4 +242,6 @@ export function ProfileForm() {
   );
 }
 
-export default ProfileForm;
+
+export default Question
+

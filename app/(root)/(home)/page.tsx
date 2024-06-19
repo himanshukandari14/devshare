@@ -6,49 +6,20 @@ import GlobalSearch from '@/components/shared/search/GlobalSearch'
 import LocalSearchbar from '@/components/shared/search/LocalSearchbar'
 import { Button } from '@/components/ui/button'
 import { HomePageFilters } from '@/constant/filters'
+import { getQuestions } from '@/lib/actions/question.action'
 import Link from 'next/link'
 import React from 'react'
 
-const questions = [
-  {
-    _id: '1',
-    title: 'sql basic query',
-    tags: [
-      { _id: '1', name: 'python' },
-      { _id: '2', name: 'sql' },
-      { _id: '3', name: 'database' },
-    ],
-    author: {
-      _id: '1', 
-      name: 'john doe', 
-      picture: 'url_to_picture', 
-    },
-    upvotes: 100000,
-    views: 200,
-    answers: [ {} , {} ],
-    createdAt: new Date('2023-09-01T12:00:00.000Z'),
-  },
-  {
-    _id: '2',
-    title: 'HOW TO CENTER A DIV',
-    tags: [
-      { _id: '1', name: 'CSS' },
-      { _id: '2', name: 'sql' },
-      { _id: '3', name: 'database' },
-    ],
-    author: {
-      _id: '1', 
-      name: 'john doe',
-      picture: 'url_to_picture', 
-    },
-    upvotes: 10,
-    views: 200,
-    answers: [ {} , {} ],
-    createdAt: new Date('2021-09-01T12:00:00.000Z')
-  }
-];
 
-const page = () => {
+const page = async () => {
+
+  // fetch questions from db
+  const results= await getQuestions({});
+  console.log(results)
+
+
+  console.log(results);
+
   return (
     <div className=' '>
       <div className='w-full min-h-[58px] flex flex-col md:flex-row md:justify-between items-center px-4'>
@@ -84,7 +55,7 @@ const page = () => {
 {/* main posts */}
 <div className='mt-10 flex w-full flex-col gap-6'></div>
     {/* looping through questions */}
-    {questions.length > 0? questions.map((question)=>(
+    {results.questions.length > 0? results.questions.map((question)=>(
      <QuestionCard key={question._id} _id={question._id} title={question.title} tags={question.tags} author={question.author} upvotes={question.upvotes} views={question.upvotes} answers={question.answers} createdAt={question.createdAt} />
     ))
     : <NoResult title="There is no question to show" description="Be the first to break the silence, Ask a question and kickstart the discussion. Your query could be the  next big thing others can learn from "
