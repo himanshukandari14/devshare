@@ -23,8 +23,10 @@ export async function getUserId(params:any) {
 
 export async function createUser(userData:CreateUserParams){
     try {
-        connectToDatabase();
+        await connectToDatabase();
         const newUser= await User.create(userData)
+
+        return JSON.parse(JSON.stringify(newUser))
     } catch (error) {
         
     }
